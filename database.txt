@@ -1,0 +1,80 @@
+HOW TO TEST THE DATABASE
+========================
+
+This shows you how to check if the database actually works.
+
+Command to insepct db file
+
+sqlite3 -cmd ".headers on" -cmd ".mode column" file.db 
+
+BASIC TESTS:
+-----------
+
+1. RUN THE SERVER:
+   
+   python node.py --uuid testserver --host 127.0.0.1 --port 9001
+
+   You should see:
+   [db] Initialized database: testserver_server.db
+   [db] Loaded: 0 users (0 online), 0 servers, 0 queued messages
+   [node] testserver listening ws://127.0.0.1:9001
+
+
+2. CHECK THE DATABASE FILE EXISTS:
+   
+   dir *.db
+   
+   You should see a file called testserver_server.db
+
+
+3. TEST TWO SERVERS TALKING TO EACH OTHER:
+   
+   Open two PowerShell windows:
+   
+   Window 1:
+   python node.py --uuid intro --host 127.0.0.1 --port 9000 --introducer
+   
+   Window 2:
+   python node.py --uuid server1 --host 127.0.0.1 --port 9001 --bootstrap 127.0.0.1:9000
+   
+   They should connect and save each other's info in the database.
+
+
+4. TEST IF DATA SAVES AFTER RESTART:
+   
+   a) Start a server:
+      python node.py --uuid myserver --port 9002
+   
+   b) Stop it with Ctrl+C
+   
+   c) Start it again:
+      python node.py --uuid myserver --port 9002
+   
+   It should load the old data (you'll see it in the startup message).
+
+
+WHAT GETS SAVED:
+---------------
+
+- Users and their public keys
+- Other servers you connected to
+- Messages for offline users
+- Log of who connected when
+
+
+WHAT SHOULD HAPPEN:
+------------------
+
+- Database file appears when you first run the server
+- Connections stay saved even if you restart
+- Every action gets logged
+- Messages wait in queue if someone is offline
+
+
+QUICK NOTES:
+-----------
+
+- Each server gets its own .db file
+- Don't upload .db files to GitHub
+- Use --no-db if you don't want database
+- Everything is stored locally (no external database needed)

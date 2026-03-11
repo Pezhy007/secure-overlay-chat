@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.db
+*.db.salt
+*_server.db
+.env
+.vscode/
+.venv/
